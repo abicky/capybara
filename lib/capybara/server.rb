@@ -55,6 +55,10 @@ module Capybara
     end
 
     def wait_for_pending_requests
+      if Capybara.current_session.server != self
+        raise "#{__method__} is called but the current session server is another. Please set Capybara.reuse_server to false."
+      end
+
       timer = Capybara::Helpers.timer(expire_in: 60)
       while pending_requests?
         raise 'Requests did not finish in 60 seconds' if timer.expired?
